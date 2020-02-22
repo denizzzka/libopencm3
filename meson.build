@@ -1,4 +1,4 @@
-project('libopencm3')
+project('libopencm3', 'c')
 
 # for ensure what appropriate compiler is installed
 __gcc_for_libopencm3_unused = find_program('arm-none-eabi-gcc')
@@ -22,9 +22,15 @@ copied_lib = custom_target('Copy library',
 
 _lib = static_library('opencm3_stm32f1')
 
-stm32f1_dep = declare_dependency(
-    include_directories: include_directories('./include/'),
-    link_with: _lib
+includes = include_directories('./include/')
+
+reset_handler_dep = library(
+    'reset_handler',
+    'lib/cm3/vector.c', #reset_handler is here
+    include_directories: includes,
 )
 
-#ld_script = configure_file
+stm32f1_dep = declare_dependency(
+    include_directories: includes,
+    link_with: [_lib, reset_handler_dep],
+)
