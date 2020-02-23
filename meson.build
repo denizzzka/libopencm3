@@ -7,20 +7,19 @@ legacy_make = find_program('make')
 
 lib_filename = 'libopencm3_stm32f1.a'
 
-make_all = custom_target('Run makefile',
+make_all = custom_target(
+    'Run makefile',
     command : [legacy_make, '-C', meson.current_source_dir(), 'lib/stm32/f1'],
-    output: lib_filename+'_1'
+    output: 'Makefile' #Any file
 )
 
 cp = find_program('cp')
 
-copied_lib = custom_target('Copy library',
+_lib = custom_target('Copy library',
     depends: make_all,
-    command : [cp, meson.current_source_dir()+'/lib/'+lib_filename, meson.current_source_dir()],
-    output: lib_filename+'_2'
+    command : [cp, meson.current_source_dir()+'/lib/'+lib_filename, '@OUTDIR@'],
+    output: lib_filename
 )
-
-_lib = static_library('opencm3_stm32f1')
 
 includes = include_directories('./include/')
 
