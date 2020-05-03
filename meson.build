@@ -29,6 +29,18 @@ reset_handler_dep = library(
     include_directories: includes,
 )
 
+ld_script_gen = generator(
+    legacy_make,
+    arguments : [
+        '-f', 'mk/gen-ldscript.mk', 'generate',
+        'RENAME_TO=@BASENAME@',
+        'OPENCM3_DIR=.',
+        '@EXTRA_ARGS@',
+    ],
+    output: '@BASENAME@',
+)
+
+
 stm32f1_dep = declare_dependency(
     include_directories: includes,
     link_with: [_lib, reset_handler_dep],
