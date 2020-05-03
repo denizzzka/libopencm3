@@ -33,11 +33,11 @@ ld_script_gen = generator(
     legacy_make,
     arguments : [
         '-f', 'mk/gen-ldscript.mk', 'generate',
-        'RENAME_TO=@BASENAME@',
+        'RENAME_TO=@BASENAME@.ld',
         'OPENCM3_DIR=.',
         '@EXTRA_ARGS@',
     ],
-    output: '@BASENAME@',
+    output: '@BASENAME@.ld',
 )
 
 
