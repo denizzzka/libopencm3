@@ -40,8 +40,7 @@ ld_script_gen = generator(
     output: '@BASENAME@.ld',
 )
 
-
-stm32f1_dep = declare_dependency(
+libopencm3_dep = declare_dependency(
     include_directories: includes,
     link_with: [_lib, reset_handler_dep],
 )
