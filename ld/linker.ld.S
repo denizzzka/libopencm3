@@ -126,6 +126,36 @@ SECTIONS
 	} >ram AT >rom
 	_data_loadaddr = LOADADDR(.data);
 
+	/* Thread local initialized data. This gets
+	 * space allocated as it is expected to be placed
+	 * in ram to be used as a template for TLS data blocks
+	 * allocated at runtime. We're slightly abusing that
+	 * by placing the data in flash where it will be copied
+	 * into the allocate ram addresses by the existing
+	 * data initialization code in crt0
+	 */
+	.tdata : ALIGN_WITH_INPUT {
+		PROVIDE( __tls_base = .);
+		*(.tdata .tdata.* .gnu.linkonce.td.*)
+		PROVIDE(__data_end = .);
+	} >ram AT>flash :tls :ram_init
+	PROVIDE( __tdata_source = LOADADDR(.tdata) );
+	PROVIDE( __tdata_size = SIZEOF(.tdata) );
+
+	PROVIDE( __edata = __data_end );
+	PROVIDE( _edata = __data_end );
+	PROVIDE( edata = __data_end );
+	PROVIDE( __data_size = __data_end - __data_start );
+
+	.tbss : {
+		PROVIDE( __bss_start = . );
+		*(.tbss .tbss.* .gnu.linkonce.tb.*)
+		*(.tcommon)
+		PROVIDE( __tls_end = . );
+	} >ram AT>ram :tls :ram
+	PROVIDE( __tbss_size = SIZEOF(.tbss) );
+	PROVIDE( __tls_size = __tls_end - __tls_base );
+
 	.bss : {
 		*(.bss*)	/* Read-write zero initialized data */
 		*(COMMON)
@@ -182,9 +212,7 @@ SECTIONS
 	} >nfcram
 #endif
 
-#ifndef _EH_FRAME
-	/DISCARD/ : { *(.eh_frame) }
-#endif
+	.eh_frame : { *(.eh_frame) }
 
 	. = ALIGN(4);
 	end = .;
@@ -192,3 +220,16 @@ SECTIONS
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
 
+/* Need for picolibc: */
+__bss_start__ = ADDR(.bss);
+PROVIDE(__bss_end__ = _ebss);
+PROVIDE(__bss_end = __bss_end__);
+
+/* copied from picolibc.ld: */
+	PROVIDE( __end = __bss_end );
+	PROVIDE( _end = __bss_end );
+	PROVIDE( end = __bss_end );
+	PROVIDE(__bss_size = __bss_end - __bss_start);
+
+	PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - (DEFINED(__stack_size) ? __stack_size : 0x800));
+	PROVIDE( __heap_size = __heap_end - __bss_end );
