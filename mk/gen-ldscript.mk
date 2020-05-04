@@ -7,7 +7,7 @@ include $(OPENCM3_DIR)/mk/gcc-config.mk
 include $(OPENCM3_DIR)/mk/genlink-rules.mk
 
 generate: $(LDSCRIPT)
-	mv $(LDSCRIPT) $(RENAME_TO)
+	mv "$(LDSCRIPT)" "$(RENAME_TO)"
 
 clean:
-	$(Q)$(RM) $(RENAME_TO)
+	$(Q)$(RM) "$(RENAME_TO)"

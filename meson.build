@@ -32,9 +32,10 @@ reset_handler_dep = library(
 ld_script_gen = generator(
     legacy_make,
     arguments : [
-        '-f', 'mk/gen-ldscript.mk', 'generate',
-        'RENAME_TO=@BASENAME@.ld',
-        'OPENCM3_DIR=.',
+        '-f', '@CURRENT_SOURCE_DIR@/mk/gen-ldscript.mk',
+        'generate',
+        'RENAME_TO=@OUTPUT@',
+        'OPENCM3_DIR=@CURRENT_SOURCE_DIR@',
         '@EXTRA_ARGS@',
     ],
     output: '@BASENAME@.ld',
