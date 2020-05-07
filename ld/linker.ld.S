@@ -134,11 +134,11 @@ SECTIONS
 	 * into the allocate ram addresses by the existing
 	 * data initialization code in crt0
 	 */
-	.tdata : ALIGN_WITH_INPUT {
+	.tdata : {
 		PROVIDE( __tls_base = .);
 		*(.tdata .tdata.* .gnu.linkonce.td.*)
 		PROVIDE(__data_end = .);
-	} >ram AT>flash :tls :ram_init
+	} >ram AT>rom :tls :ram_init
 	PROVIDE( __tdata_source = LOADADDR(.tdata) );
 	PROVIDE( __tdata_size = SIZEOF(.tdata) );
 
@@ -231,5 +231,7 @@ PROVIDE(__bss_end = __bss_end__);
 	PROVIDE( end = __bss_end );
 	PROVIDE(__bss_size = __bss_end - __bss_start);
 
-	PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - (DEFINED(__stack_size) ? __stack_size : 0x800));
+	/* Make the rest of memory available for heap storage */
+	PROVIDE( __heap_start = __end );
+	PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - 0x800 /* stack size */);
 	PROVIDE( __heap_size = __heap_end - __bss_end );
