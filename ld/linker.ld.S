@@ -25,6 +25,7 @@ EXTERN(vector_table)
 
 /* Define the entry point of the output file. */
 ENTRY(reset_handler)
+PROVIDE(_start = reset_handler);
 
 /* Define memory regions. */
 MEMORY
@@ -219,6 +220,7 @@ SECTIONS
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
+PROVIDE(__stack = _stack);
 
 /* Need for picolibc: */
 __bss_start__ = ADDR(.bss);
