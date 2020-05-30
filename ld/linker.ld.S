@@ -25,7 +25,6 @@ EXTERN(vector_table)
 
 /* Define the entry point of the output file. */
 ENTRY(reset_handler)
-PROVIDE(_start = reset_handler);
 
 /* Define memory regions. */
 MEMORY
@@ -127,6 +126,13 @@ SECTIONS
 	} >ram AT >rom
 	_data_loadaddr = LOADADDR(.data);
 
+	.bss : {
+		*(.bss*)	/* Read-write zero initialized data */
+		*(COMMON)
+		. = ALIGN(4);
+		_ebss = .;
+	} >ram
+
 	/* Thread local initialized data. This gets
 	 * space allocated as it is expected to be placed
 	 * in ram to be used as a template for TLS data blocks
@@ -136,33 +142,16 @@ SECTIONS
 	 * data initialization code in crt0
 	 */
 	.tdata : {
-		PROVIDE( __tls_base = .);
+		PROVIDE( _tdata = .);
 		*(.tdata .tdata.* .gnu.linkonce.td.*)
-		PROVIDE(__data_end = .);
 	} >ram AT>rom :tls :ram_init
-	PROVIDE( __tdata_source = LOADADDR(.tdata) );
-	PROVIDE( __tdata_size = SIZEOF(.tdata) );
-
-	PROVIDE( __edata = __data_end );
-	PROVIDE( _edata = __data_end );
-	PROVIDE( edata = __data_end );
-	PROVIDE( __data_size = __data_end - __data_start );
 
 	.tbss : {
-		PROVIDE( __bss_start = . );
+		PROVIDE( _tbss = . );
 		*(.tbss .tbss.* .gnu.linkonce.tb.*)
 		*(.tcommon)
-		PROVIDE( __tls_end = . );
+		PROVIDE( _etbss = . );
 	} >ram AT>ram :tls :ram
-	PROVIDE( __tbss_size = SIZEOF(.tbss) );
-	PROVIDE( __tls_size = __tls_end - __tls_base );
-
-	.bss : {
-		*(.bss*)	/* Read-write zero initialized data */
-		*(COMMON)
-		. = ALIGN(4);
-		_ebss = .;
-	} >ram
 
 #if defined(_CCM)
 	.ccm : {
@@ -217,23 +206,14 @@ SECTIONS
 
 	. = ALIGN(4);
 	end = .;
+
+	.heap : {
+		_heap = .;
+	} >ram
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
-PROVIDE(__stack = _stack);
 
-/* Need for picolibc: */
-__bss_start__ = ADDR(.bss);
-PROVIDE(__bss_end__ = _ebss);
-PROVIDE(__bss_end = __bss_end__);
-
-/* copied from picolibc.ld: */
-	PROVIDE( __end = __bss_end );
-	PROVIDE( _end = __bss_end );
-	PROVIDE( end = __bss_end );
-	PROVIDE(__bss_size = __bss_end - __bss_start);
-
-	/* Make the rest of memory available for heap storage */
-	PROVIDE( __heap_start = __end );
-	PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - 0x800 /* stack size */);
-	PROVIDE( __heap_size = __heap_end - __bss_end );
+/* Additions for picolibc: */
+PROVIDE( __heap_start = _heap );
+PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - 0x800 /* stack size */);
