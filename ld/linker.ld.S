@@ -126,13 +126,6 @@ SECTIONS
 	} >ram AT >rom
 	_data_loadaddr = LOADADDR(.data);
 
-	.bss : {
-		*(.bss*)	/* Read-write zero initialized data */
-		*(COMMON)
-		. = ALIGN(4);
-		_ebss = .;
-	} >ram
-
 	/* Thread local initialized data. This gets
 	 * space allocated as it is expected to be placed
 	 * in ram to be used as a template for TLS data blocks
@@ -144,6 +137,7 @@ SECTIONS
 	.tdata : {
 		PROVIDE( _tdata = .);
 		*(.tdata .tdata.* .gnu.linkonce.td.*)
+		. = ALIGN(4);
 	} >ram AT>rom :tls :ram_init
 
 	.tbss : {
@@ -151,7 +145,15 @@ SECTIONS
 		*(.tbss .tbss.* .gnu.linkonce.tb.*)
 		*(.tcommon)
 		PROVIDE( _etbss = . );
+		. = ALIGN(4);
 	} >ram AT>ram :tls :ram
+
+	.bss : {
+		*(.bss*)	/* Read-write zero initialized data */
+		*(COMMON)
+		. = ALIGN(4);
+		_ebss = .;
+	} >ram
 
 #if defined(_CCM)
 	.ccm : {
@@ -206,14 +208,10 @@ SECTIONS
 
 	. = ALIGN(4);
 	end = .;
-
-	.heap : {
-		_heap = .;
-	} >ram
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
 
 /* Additions for picolibc: */
-PROVIDE( __heap_start = _heap );
+PROVIDE( __heap_start = end );
 PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - 0x800 /* stack size */);
