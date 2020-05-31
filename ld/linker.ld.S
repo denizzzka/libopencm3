@@ -118,14 +118,6 @@ SECTIONS
 	. = ALIGN(4);
 	_etext = .;
 
-	.data : {
-		_data = .;
-		*(.data*)	/* Read-write initialized data */
-		. = ALIGN(4);
-		_edata = .;
-	} >ram AT >rom
-	_data_loadaddr = LOADADDR(.data);
-
 	/* Thread local initialized data. This gets
 	 * space allocated as it is expected to be placed
 	 * in ram to be used as a template for TLS data blocks
@@ -147,6 +139,14 @@ SECTIONS
 		PROVIDE( _etbss = . );
 		. = ALIGN(4);
 	} >ram AT>ram :tls :ram
+
+	.data : {
+		_data = .;
+		*(.data*)	/* Read-write initialized data */
+		. = ALIGN(4);
+		_edata = .;
+	} >ram AT >rom
+	_data_loadaddr = LOADADDR(.data);
 
 	.bss : {
 		*(.bss*)	/* Read-write zero initialized data */
