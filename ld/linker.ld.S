@@ -139,6 +139,7 @@ SECTIONS
 		PROVIDE( _etbss = . );
 		. = ALIGN(4);
 	} >ram AT>ram :tls :ram
+	_tbss_size = SIZEOF(.tbss);
 
 	.data : {
 		_data = .;
