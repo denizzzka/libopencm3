@@ -115,6 +115,19 @@ SECTIONS
 		__exidx_end = .;
 	} >rom
 
+	.eh_frame : {
+		__eh_frame_start = .; /* used by libunwind */
+		*(.eh_frame)
+		__eh_frame_end = .; /* used by libunwind */
+		. = ALIGN(4);
+	} >rom
+
+	.eh_frame_hdr : {
+		__eh_frame_hdr_start = .; /* used by libunwind */
+		*(.eh_frame_hdr)
+		__eh_frame_hdr_end = .; /* used by libunwind */
+	} >rom
+
 	. = ALIGN(4);
 	_etext = .;
 
@@ -204,9 +217,6 @@ SECTIONS
 		. = ALIGN(4);
 	} >nfcram
 #endif
-
-	.eh_frame : { *(.eh_frame) }
-
 	. = ALIGN(4);
 	end = .;
 }
