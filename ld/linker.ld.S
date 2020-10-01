@@ -115,8 +115,44 @@ SECTIONS
 		__exidx_end = .;
 	} >rom
 
+	.eh_frame : {
+		__eh_frame_start = .; /* used by libunwind */
+		*(.eh_frame)
+		__eh_frame_end = .; /* used by libunwind */
+		. = ALIGN(4);
+	} >rom
+
+	.eh_frame_hdr : {
+		__eh_frame_hdr_start = .; /* used by libunwind */
+		*(.eh_frame_hdr)
+		__eh_frame_hdr_end = .; /* used by libunwind */
+	} >rom
+
 	. = ALIGN(4);
 	_etext = .;
+
+	/* Thread local initialized data. This gets
+	 * space allocated as it is expected to be placed
+	 * in ram to be used as a template for TLS data blocks
+	 * allocated at runtime. We're slightly abusing that
+	 * by placing the data in flash where it will be copied
+	 * into the allocate ram addresses by the existing
+	 * data initialization code in crt0
+	 */
+	.tdata : {
+		PROVIDE( _tdata = .);
+		*(.tdata .tdata.* .gnu.linkonce.td.*)
+		. = ALIGN(4);
+	} >ram AT>rom :tls :ram_init
+
+	.tbss : {
+		PROVIDE( _tbss = . );
+		*(.tbss .tbss.* .gnu.linkonce.tb.*)
+		*(.tcommon)
+		PROVIDE( _etbss = . );
+		. = ALIGN(4);
+	} >ram AT>ram :tls :ram
+	_tbss_size = SIZEOF(.tbss);
 
 	.data : {
 		_data = .;
@@ -181,16 +217,12 @@ SECTIONS
 		. = ALIGN(4);
 	} >nfcram
 #endif
-
-	/*
-	 * The .eh_frame section appears to be used for C++ exception handling.
-	 * You may need to fix this if you're using C++.
-	 */
-	/DISCARD/ : { *(.eh_frame) }
-
 	. = ALIGN(4);
 	end = .;
 }
 
 PROVIDE(_stack = ORIGIN(ram) + LENGTH(ram));
 
+/* Additions for picolibc: */
+PROVIDE( __heap_start = end );
+PROVIDE( __heap_end = ORIGIN(ram) + LENGTH(ram) - 0x800 /* stack size */);
