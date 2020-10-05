@@ -30,7 +30,7 @@ ENTRY(reset_handler)
 MEMORY
 {
 	/* RAM is always used */
-	ram (rwx) : ORIGIN = _RAM_OFF, LENGTH = _RAM
+	ram (rwx) : ORIGIN = _RAM_OFF, LENGTH = 10M /*FIXME*/
 
 #if defined(_ROM)
 	rom (rx) : ORIGIN = _ROM_OFF, LENGTH = _ROM
