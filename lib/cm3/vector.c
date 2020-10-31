@@ -18,6 +18,7 @@
  * along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <libopencm3/cm3/scb.h>
 #include <libopencm3/cm3/vector.h>
 
@@ -90,13 +91,15 @@ void __attribute__ ((weak)) reset_handler(void)
 	}
 
 	/* Call the application's entry point. */
-	(void)main();
+	//TODO: replace this file by our own vector.d
+	int ret = main();
 
 	/* Destructors. */
 	for (fp = &__fini_array_start; fp < &__fini_array_end; fp++) {
 		(*fp)();
 	}
 
+	_Exit(ret);
 }
 
 void blocking_handler(void)
