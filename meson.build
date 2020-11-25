@@ -8,12 +8,15 @@ includes = include_directories(
 
 sources = files(
   'lib/cm3/assert.c',
+  'lib/cm3/scb.c',
   'lib/cm3/systick.c',
   'lib/cm3/vector.c',
   'lib/stm32/common/flash_common_all.c',
   'lib/stm32/common/gpio_common_all.c',
   'lib/stm32/common/rcc_common_all.c',
   'lib/stm32/common/pwr_common_v1.c',
+  'lib/stm32/common/spi_common_all.c',
+  'lib/stm32/common/spi_common_v1.c',
   'lib/stm32/f1/gpio.c',
   'lib/stm32/f1/rcc.c',
   'lib/stm32/f1/rtc.c',
