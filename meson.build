@@ -8,10 +8,13 @@ includes = include_directories(
 
 sources = files(
   'lib/cm3/assert.c',
+  'lib/cm3/nvic.c',
   'lib/cm3/scb.c',
   'lib/cm3/systick.c',
   'lib/cm3/vector.c',
+  'lib/stm32/common/exti_common_all.c',
   'lib/stm32/common/flash_common_all.c',
+  'lib/stm32/common/flash_common_idcache.c',
   'lib/stm32/common/gpio_common_all.c',
   'lib/stm32/common/rcc_common_all.c',
   'lib/stm32/common/pwr_common_v1.c',
@@ -27,8 +30,10 @@ for_f1 = files(
 
 for_f4 = files(
   'lib/stm32/common/gpio_common_f0234.c',
+  'lib/stm32/f4/pwr.c',
   'lib/stm32/f4/rcc.c',
   'lib/stm32/f4/rtc.c',
+  'lib/stm32/f4/vector_chipset.c',
 )
 
 libopencm3_dep = declare_dependency(
