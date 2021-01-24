@@ -23,14 +23,16 @@ latex/
 *.tag
 .DS_Store
 # These are generated
-include/libopencm3/**/nvic.h
-include/libopencm3/**/**/nvic.h
+# TODO: temporary disabled by meson.build maintainer:
+#include/libopencm3/**/nvic.h
+#include/libopencm3/**/**/nvic.h
 # (not these three though...)
 !include/libopencm3/cm3/nvic.h
 !include/libopencm3/dispatch/nvic.h
 !include/libopencm3/lm4f/nvic.h
-lib/**/vector_nvic.c
-lib/**/**/vector_nvic.c
+# TODO: temporary disabled by meson.build maintainer:
+#lib/**/vector_nvic.c
+#lib/**/**/vector_nvic.c
 # (not this one either)
 !lib/dispatch/vector_nvic.c
 DoxygenLayout.xml
