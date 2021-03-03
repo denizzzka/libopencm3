@@ -1,7 +1,5 @@
 project('libopencm3', 'c')
 
-lib_filename = 'libopencm3_stm32f1.a'
-
 includes = include_directories(
     './include'
 )
